@@ -73,6 +73,12 @@ Mode *Plane::mode_from_mode_num(const enum Mode::Number num)
     case Mode::Number::TAKEOFF:
         ret = &mode_takeoff;
         break;
+    case Mode::Number::SUBPLANE:
+        ret = &mode_subplane;
+        break;
+    case Mode::Number::FULL:
+        ret = &mode_full;
+        break;
     }
     return ret;
 }
@@ -134,6 +140,24 @@ void Plane::read_control_switch()
         if (RC_Channels::get_radio_in(g.parachute_channel-1) >= 1700) {
             parachute_manual_release();
         }
+    }
+#endif
+#ifdef USE_RELAY
+    if(channel_assist_motor->get_radio_in()>= 1700)
+    {
+        plane.relay.off(0);
+    }
+    else
+    {
+        plane.relay.on(0);
+    }
+    if(channel_motor_driver->get_radio_in() >= 1700)
+    {
+        plane.relay.off(1);
+    }
+    else
+    {
+        plane.relay.on(1);
     }
 #endif
 }

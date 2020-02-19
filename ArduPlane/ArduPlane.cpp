@@ -3,19 +3,15 @@
  
    Authors:    Doug Weibel, Jose Julio, Jordi Munoz, Jason Short, Randy Mackay, Pat Hickey, John Arne Birkeland, Olivier Adler, Amilcar Lucas, Gregory Fletcher, Paul Riseborough, Brandon Jones, Jon Challinger, Tom Pittenger
    Thanks to:  Chris Anderson, Michael Oborne, Paul Mather, Bill Premerlani, James Cohen, JB from rotorFX, Automatik, Fefenin, Peter Meister, Remzibi, Yury Smirnov, Sandro Benigno, Max Levine, Roberto Navoni, Lorenz Meier, Yury MonZon
-
    Please contribute your ideas! See https://dev.ardupilot.org for details
-
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
-
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -110,6 +106,9 @@ const AP_Scheduler::Task Plane::scheduler_tasks[] = {
     SCHED_TASK(efi_update,             10,    200),
 #endif
     SCHED_TASK(update_dynamic_notch,   50,    200),
+#if FLOAT_CONTROL_ENABLE == ENABLED
+    SCHED_TASK(float_control, 5, 50),
+#endif
 };
 
 constexpr int8_t Plane::_failsafe_priorities[7];
@@ -526,6 +525,8 @@ void Plane::update_navigation()
     case Mode::Number::QRTL:
     case Mode::Number::QAUTOTUNE:
     case Mode::Number::QACRO:
+    case Mode::Number::SUBPLANE:
+    case Mode::Number::FULL:
         // nothing to do
         break;
     }
@@ -648,7 +649,6 @@ void Plane::update_flight_stage(void)
 
 /*
     If land_DisarmDelay is enabled (non-zero), check for a landing then auto-disarm after time expires
-
     only called from AP_Landing, when the landing library is ready to disarm
  */
 void Plane::disarm_if_autoland_complete()
@@ -700,6 +700,325 @@ void Plane::publish_osd_info()
     nav_info.wp_xtrack_error = nav_controller->crosstrack_error();
     nav_info.wp_number = mission.get_current_nav_index();
     osd.set_nav_info(nav_info);
+}
+#endif
+#if FLOAT_CONTROL_ENABLE == ENABLED
+void Plane::float_control()
+{
+    //control mode must be subplane
+    //ahrs.get sencondary attitude
+    //get rc
+    Vector3f eulers;
+    float roll = 0;
+    float pitch = 0;
+    State_Machine_Sink_t sms;
+    if(control_mode->mode_number() == Mode::Number::SUBPLANE)
+    {
+#ifdef USE_RC_PWM_IN
+        //update sms
+        uint16_t pwm;
+        if(failsafe.rc_failsafe)
+            sms = SMS_NOSIGNAL;
+        pwm = rc().channel(CHANNEL_FLOAT_CONTROL)->get_radio_in();
+        if((pwm>1800)&&(pwm<2000))
+            sms = SMS_FLOAT;
+        else if((pwm>1000)&&(pwm<1200))
+            sms = SMS_DIVE;
+        else if(pwm<1000)
+            sms = SMS_CHARGE;
+        else if((pwm>2000)&&(pwm<2300))
+            sms = SMS_STOP;
+        else
+            sms = SMS_STABLE; 
+#endif
+#ifdef USE_AUTO_IN
+        //define a new varialbe to set sms by flight control
+        sms = SMS_STABLE;
+#endif
+
+    
+        if(Plane::ahrs.get_secondary_attitude(eulers))
+        {
+            roll = eulers.x;
+            pitch = eulers.y;
+        }
+        switch (sms)
+        {
+        case SMS_NOSIGNAL:
+            balancewhenfloat(roll,pitch);
+            break;
+        case SMS_STABLE:
+            balancewhenstable(roll,pitch);
+            break;
+        case SMS_FLOAT:
+            balancewhenfloat(roll,pitch);
+            break;
+        case SMS_DIVE:
+            balancewhendive(roll,pitch);
+            break;
+        case SMS_CHARGE:
+            balancewhencharge(roll,pitch);
+            break;
+        case SMS_STOP:
+            balancewhenstop(roll,pitch);
+            break;
+        default:
+
+                break;
+        }
+        
+    }
+}
+
+void Plane::balancewhenfloat(float pitch,float roll)
+{
+    
+    if((roll<ROLLMIN)||(roll>ROLLMAX)||(pitch<PITCHMIN)||(pitch>PITCHMAX))
+    {
+        if(abs(roll)>abs(pitch))
+        {
+            if(roll>0)
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif            
+            }
+            else
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif                
+            }
+            
+        }
+        if(abs(roll)>abs(pitch))
+        {
+            if(roll>0)
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif
+            }
+            else
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif               
+            }
+        }
+    }
+}
+void Plane::balancewhenstable(float pitch,float roll)
+{
+    
+    if((roll<ROLLMIN)||(roll>ROLLMAX)||(pitch<PITCHMIN)||(pitch>PITCHMAX))
+    {
+        if(abs(roll)>abs(pitch))
+        {
+            if(roll>0)
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif            
+            }
+            else
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif                
+            }
+            
+        }
+        if(abs(roll)>abs(pitch))
+        {
+            if(roll>0)
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif
+            }
+            else
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif               
+            }
+        }
+    }
+}
+void Plane::balancewhendive(float pitch,float roll)
+{
+    
+    if((roll<ROLLMIN)||(roll>ROLLMAX)||(pitch<PITCHMIN)||(pitch>PITCHMAX))
+    {
+        if(abs(roll)>abs(pitch))
+        {
+            if(roll>0)
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif            
+            }
+            else
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif                
+            }
+            
+        }
+        if(abs(roll)>abs(pitch))
+        {
+            if(roll>0)
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif
+            }
+            else
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif               
+            }
+        }
+    }
+}
+void Plane::balancewhencharge(float pitch,float roll)
+{
+    
+    if((roll<ROLLMIN)||(roll>ROLLMAX)||(pitch<PITCHMIN)||(pitch>PITCHMAX))
+    {
+        if(abs(roll)>abs(pitch))
+        {
+            if(roll>0)
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif            
+            }
+            else
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif                
+            }
+            
+        }
+        if(abs(roll)>abs(pitch))
+        {
+            if(roll>0)
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif
+            }
+            else
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif               
+            }
+        }
+    }
+}
+void Plane::balancewhenstop(float pitch,float roll)
+{
+    
+    if((roll<ROLLMIN)||(roll>ROLLMAX)||(pitch<PITCHMIN)||(pitch>PITCHMAX))
+    {
+        if(abs(roll)>abs(pitch))
+        {
+            if(roll>0)
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif            
+            }
+            else
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif                
+            }
+            
+        }
+        if(abs(roll)>abs(pitch))
+        {
+            if(roll>0)
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif
+            }
+            else
+            {
+#ifdef USE_UART_OUT
+
+#endif
+#ifdef USE_PWM_OUT   
+
+#endif               
+            }
+        }
+    }
 }
 #endif
 

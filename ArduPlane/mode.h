@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-02-18 21:35:43
+ * @LastEditTime: 2020-02-18 22:35:23
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /ardupilot/home/idk/下载/mode.h
+ */
 #pragma once
 
 #include <AP_Param/AP_Param.h>
@@ -38,6 +46,8 @@ public:
         QRTL          = 21,
         QAUTOTUNE     = 22,
         QACRO         = 23,
+        SUBPLANE      = 24,
+        FULL          = 25
     };
 
     // Constructor
@@ -479,4 +489,55 @@ protected:
     Location start_loc;
 
     bool _enter() override;
+};
+class ModeSubPlane : public Mode
+{
+public:
+    Number mode_number() const override { return Number::SUBPLANE; }
+    const char *name() const override { return "SUBPLANE"; }
+    const char *name4() const override { return "SUBP"; }
+    // methods that affect movement of the vehicle in this mode
+    void update() override;
+    void manual_interact();
+    float assist_speed_temp;
+    typedef enum
+    {
+        float_stage,
+        stable_stage,
+        dive_stage,
+        idle_stage
+    }dive_stages;
+    typedef enum
+    {
+        autorun,
+        manual,
+        emergency
+    }control_mode_t;
+    dive_stages current_stage;
+    dive_stages last_stage;
+    float pitch_input;
+    float pitch_input_offset;
+    uint32_t start_time;
+    uint32_t float_time;
+    uint32_t stable_time;
+    uint32_t mission_intervel_time;
+    bool mission_start;
+    control_mode_t control_mode;
+
+protected:
+    bool _enter() override;
+    void _exit() override;
+};
+class ModeFull : public Mode
+{
+public:
+    Number mode_number() const override { return Number::FULL; }
+    const char *name() const override { return "FULL"; }
+    const char *name4() const override { return "FULL"; }
+    // methods that affect movement of the vehicle in this mode
+    void update() override;
+    void send_report(void);
+protected:
+    bool _enter() override;
+    void _exit() override;
 };

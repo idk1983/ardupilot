@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-02-18 21:30:22
+ * @LastEditTime: 2020-02-18 21:30:23
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: /ardupilot/home/idk/下载/commands_logic.cpp
+ */
 #include "Plane.h"
 
 /********************************************************************************/
@@ -201,7 +209,6 @@ bool Plane::start_command(const AP_Mission::Mission_Command& cmd)
 
 /*******************************************************************************
 Verify command Handlers
-
 Each type of mission element has a "verify" operation. The verify
 operation returns true when the mission element has completed and we
 should move onto the next mission element.
@@ -1098,7 +1105,6 @@ bool Plane::verify_loiter_heading(bool init)
       Check to see if the the plane is heading toward the land
       waypoint. We use 20 degrees (+/-10 deg) of margin so that
       we can handle 200 degrees/second of yaw.
-
       After every full circle, extend acceptance criteria to ensure
       aircraft will not loop forever in case high winds are forcing
       it beyond 200 deg/sec when passing the desired exit course

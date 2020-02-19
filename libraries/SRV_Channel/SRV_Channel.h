@@ -299,7 +299,11 @@ public:
     // constructor
     SRV_Channels(void);
 
+    static bool set_aux_channel_forced(SRV_Channel::Aux_servo_function_t function, uint8_t channel);
+
     static const struct AP_Param::GroupInfo var_info[];
+    
+    static bool exchange_throttle_function(uint8_t num_none_channel); 
 
     // set the default function for a channel
     static void set_default_function(uint8_t chan, SRV_Channel::Aux_servo_function_t function);

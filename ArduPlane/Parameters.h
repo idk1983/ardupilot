@@ -342,7 +342,16 @@ public:
         k_param_mixing_offset,
         k_param_dspoiler_rud_rate,
 
+        //user added
+        k_param_d_target_depth = 250,
+        k_param_d_init_depth,
+        k_param_d_swim_offset,
+
         k_param_logger = 253, // Logging Group
+
+        //user added
+        k_param_d_swim_time,
+        k_param_d_total_time,
 
         // 254,255: reserved
 
@@ -493,6 +502,12 @@ public:
 #endif
     AP_Int16 gcs_pid_mask;
     AP_Int8 parachute_channel;
+    //user added
+    AP_Float d_target_depth;
+	AP_Float d_init_depth;
+	AP_Float d_swim_offset;
+    AP_Int32 d_swim_time;
+	AP_Int32 d_total_time;
 };
 
 /*

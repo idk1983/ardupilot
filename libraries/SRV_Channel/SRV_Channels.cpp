@@ -299,3 +299,62 @@ void SRV_Channels::push()
     }
 #endif // HAL_WITH_UAVCAN
 }
+bool SRV_Channels::set_aux_channel_forced(SRV_Channel::Aux_servo_function_t function, uint8_t channel)
+{
+    if (!initialised) {
+        update_aux_servo_function();
+    }
+    // if (function_assigned(function)) {
+    //     // already assigned
+    //     return true;
+    // }
+    // if (channels[channel].function != SRV_Channel::k_none) {
+    //     if (channels[channel].function == function) {
+    //         return true;
+    //     }
+    //     hal.console->printf("Channel %u already assigned function %u\n",
+    //                         (unsigned)(channel + 1),
+    //                         (unsigned)channels[channel].function);
+    //     return false;
+    // }
+    channels[channel].type_setup = false;
+    channels[channel].function.set(function);
+    channels[channel].aux_servo_function_setup();
+    function_mask.set((uint8_t)function);
+    functions[function].channel_mask |= 1U<<channel;
+    return true;
+}
+bool SRV_Channels::exchange_throttle_function(uint8_t num_none_channel)
+{
+    uint8_t throttle_position = 0;
+    bool throttle_found = false;
+    bool new_function_available = false;
+
+    for (uint8_t i=0; i<NUM_SERVO_CHANNELS; i++) 
+    {
+        if (channels[i].function == SRV_Channel::k_throttle) 
+        {
+            throttle_position = i;
+            throttle_found = true;
+            break;
+        }
+    }
+    if (channels[num_none_channel].function == SRV_Channel::k_none) 
+    {
+        new_function_available = true;    
+    }
+    if(throttle_found && new_function_available)
+    {
+        //channels[throttle_position].function = SRV_Channel::k_none;
+        //channels[num_none_channel].function = SRV_Channel::k_throttle;
+        //channels[throttle_position].aux_servo_function_setup();
+        //channels[num_none_channel].aux_servo_function_setup();
+        //update_aux_servo_function();
+        //channels[throttle_position].enable_aux_servos();
+        set_aux_channel_forced(SRV_Channel::k_none, throttle_position);
+        set_aux_channel_forced(SRV_Channel::k_throttle, num_none_channel);
+        return true;
+    }
+    return false;
+}
+

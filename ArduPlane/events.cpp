@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-02-18 21:32:52
+ * @LastEditTime: 2020-02-18 23:03:24
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /ardupilot/home/idk/下载/events.cpp
+ */
 #include "Plane.h"
 
 void Plane::failsafe_short_on_event(enum failsafe_state fstype, ModeReason reason)
@@ -40,6 +48,7 @@ void Plane::failsafe_short_on_event(enum failsafe_state fstype, ModeReason reaso
         break;
         
     case Mode::Number::AUTO:
+    case Mode::Number::FULL:
     case Mode::Number::AVOID_ADSB:
     case Mode::Number::GUIDED:
     case Mode::Number::LOITER:
@@ -53,6 +62,14 @@ void Plane::failsafe_short_on_event(enum failsafe_state fstype, ModeReason reaso
             }
         }
         break;
+        case Mode::Number::SUBPLANE:
+    {
+        //during the short on failsafe event,slowdown the speed 
+        //keep the depth unchanged
+        failsafe.saved_mode_number = control_mode->mode_number();
+        failsafe.saved_mode_set = true;
+        break;
+    }
 
     case Mode::Number::CIRCLE:
     case Mode::Number::TAKEOFF:
@@ -107,6 +124,7 @@ void Plane::failsafe_long_on_event(enum failsafe_state fstype, ModeReason reason
         break;
         
     case Mode::Number::AUTO:
+    case Mode::Number::FULL:
     case Mode::Number::AVOID_ADSB:
     case Mode::Number::GUIDED:
     case Mode::Number::LOITER:
@@ -120,6 +138,15 @@ void Plane::failsafe_long_on_event(enum failsafe_state fstype, ModeReason reason
             set_mode(mode_rtl, reason);
         }
         break;
+        case Mode::Number::SUBPLANE:
+    {
+        //control the plane float to the surface
+        //close or slowdown the throttle
+        //lower the elevator
+        //channel_throttle->set_control_in(0);
+        //channel_rudder->set_control_in(0);
+        break;
+    }
 
     case Mode::Number::RTL:
     case Mode::Number::QLAND:

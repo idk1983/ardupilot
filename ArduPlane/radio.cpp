@@ -18,7 +18,8 @@ void Plane::set_control_channels(void)
     channel_pitch    = RC_Channels::rc_channel(rcmap.pitch()-1);
     channel_throttle = RC_Channels::rc_channel(rcmap.throttle()-1);
     channel_rudder   = RC_Channels::rc_channel(rcmap.yaw()-1);
-
+    channel_execute  = RC_Channels::rc_channel(CH_11);
+    channel_depth_simulation = RC_Channels::rc_channel(CH_10);
     // set rc channel ranges
     channel_roll->set_angle(SERVO_MAX);
     channel_pitch->set_angle(SERVO_MAX);
@@ -129,6 +130,7 @@ void Plane::rudder_arm_disarm_check()
     // modes then disallow rudder arming/disarming
     if (auto_throttle_mode &&
         (control_mode != &mode_cruise && control_mode != &mode_fbwb)) {
+        //(control_mode != &mode_cruise && control_mode != &mode_fbwb &&control_mode != &mode_subplane)) {
         rudder_arm_timer = 0;
         return;      
     }
@@ -199,7 +201,33 @@ void Plane::read_radio()
         channel_throttle->recompute_pwm_no_deadzone();
         channel_rudder->recompute_pwm_no_deadzone();
     }
-
+    if(control_mode == &mode_subplane)
+    {
+        if((mode_subplane.mission_start == true)&&(mode_subplane.control_mode == mode_subplane.autorun))
+        {
+            if(mode_subplane.current_stage == ModeSubPlane::idle_stage )
+            {
+                channel_throttle->set_radio_in(1000);
+            }
+            else    
+            {
+                channel_throttle->set_radio_in(2200);
+            }
+            if(channel_throttle->get_type() == RC_Channel::RC_CHANNEL_TYPE_RANGE)
+            {
+                channel_throttle->set_control_in(channel_throttle->pwm_to_range());
+            }  
+        }
+        if(mode_subplane.control_mode == mode_subplane.emergency)
+        {
+            channel_throttle->set_radio_in(1000);
+            if(channel_throttle->get_type() == RC_Channel::RC_CHANNEL_TYPE_RANGE)
+            {
+                channel_throttle->set_control_in(channel_throttle->pwm_to_range());
+            }
+        }
+        
+    }
     control_failsafe();
 
     if (g.throttle_nudge && channel_throttle->get_control_in() > 50 && geofence_stickmixing()) {
@@ -261,6 +289,19 @@ void Plane::control_failsafe()
         channel_rudder->set_control_in(0);
 
         switch (control_mode->mode_number()) {
+            case Mode::Number::SUBPLANE:
+                {
+                    // channel_pitch->set_control_in(0);
+                    if(mode_subplane.mission_start == false)
+                        channel_throttle->set_control_in(0);
+                    break;
+                }
+            case Mode::Number::FULL:
+                {
+                    // channel_pitch->set_control_in(0);
+                    channel_throttle->set_control_in(0);
+                    break;
+                }
             case Mode::Number::QSTABILIZE:
             case Mode::Number::QHOVER:
             case Mode::Number::QLOITER:

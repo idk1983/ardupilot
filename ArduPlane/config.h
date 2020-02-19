@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-02-18 21:24:52
+ * @LastEditTime: 2020-02-18 22:51:40
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /ardupilot/home/idk/下载/config.h
+ */
 #pragma once
 
 #include "defines.h"
@@ -307,4 +315,13 @@
 
 #ifndef LANDING_GEAR_ENABLED
  #define LANDING_GEAR_ENABLED !HAL_MINIMIZE_FEATURES
+#endif
+#ifndef FLOAT_CONTROL_ENABLE
+  #define FLOAT_CONTROL_ENABLE DISABLE
+  #define USE_RC_PWM_IN
+  //#define USE_AUTO_IN
+  #define MULTI_PUMP
+  //#define SINGLE_PUMP
+  //#define USE_UART_OUT
+  //#define USE_PWM_OUT
 #endif

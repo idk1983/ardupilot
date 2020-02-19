@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-02-18 21:22:36
+ * @LastEditTime: 2020-02-18 21:22:36
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: /ardupilot/home/idk/下载/RC_Channel.h
+ */
 #pragma once
 
 #include <RC_Channel/RC_Channel.h>

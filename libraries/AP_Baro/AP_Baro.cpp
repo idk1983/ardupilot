@@ -3,12 +3,10 @@
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
-
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -62,7 +60,7 @@
 #endif
 
 #ifndef HAL_BARO_PROBE_EXT_DEFAULT
- #define HAL_BARO_PROBE_EXT_DEFAULT 0
+ #define HAL_BARO_PROBE_EXT_DEFAULT 512
 #endif
 
 #ifdef HAL_BUILD_AP_PERIPH
@@ -118,7 +116,7 @@ const AP_Param::GroupInfo AP_Baro::var_info[] = {
     // @Description: This selects the bus number for looking for an I2C barometer. When set to -1 it will probe all external i2c buses based on the GND_PROBE_EXT parameter.
     // @Values: -1:Disabled,0:Bus0,1:Bus1
     // @User: Advanced
-    AP_GROUPINFO("EXT_BUS", 7, AP_Baro, _ext_bus, -1),
+    AP_GROUPINFO("EXT_BUS", 7, AP_Baro, _ext_bus, 0),
 
     // @Param: SPEC_GRAV
     // @DisplayName: Specific Gravity (For water depth measurement)
@@ -589,7 +587,7 @@ void AP_Baro::init(void)
 #endif
 
     // can optionally have baro on I2C too
-    if (_ext_bus >= 0) {
+/*    if (_ext_bus >= 0) {
 #if APM_BUILD_TYPE(APM_BUILD_ArduSub)
         ADD_BACKEND(AP_Baro_MS56XX::probe(*this,
                                           std::move(GET_I2C_DEVICE(_ext_bus, HAL_BARO_MS5837_I2C_ADDR)), AP_Baro_MS56XX::BARO_MS5837));
@@ -601,7 +599,7 @@ void AP_Baro::init(void)
                                           std::move(GET_I2C_DEVICE(_ext_bus, HAL_BARO_MS5611_I2C_ADDR))));
 #endif
     }
-
+*/
 #ifdef HAL_PROBE_EXTERNAL_I2C_BAROS
     _probe_i2c_barometers();
 #endif
@@ -714,7 +712,7 @@ void AP_Baro::_probe_i2c_barometers(void)
                                               std::move(GET_I2C_DEVICE(i, HAL_BARO_LPS25H_I2C_ADDR))));
         }
     }
-#if APM_BUILD_TYPE(APM_BUILD_ArduSub)
+//#if APM_BUILD_TYPE(APM_BUILD_ArduSub)
     if (probe & PROBE_LPS25H) {
         FOREACH_I2C_MASK(i,mask) {
             ADD_BACKEND(AP_Baro_KellerLD::probe(*this,
@@ -727,7 +725,7 @@ void AP_Baro::_probe_i2c_barometers(void)
                                               std::move(GET_I2C_DEVICE(i, HAL_BARO_MS5837_I2C_ADDR)), AP_Baro_MS56XX::BARO_MS5837));
         }
     }
-#endif
+//#endif
 }
 
 bool AP_Baro::should_log() const
@@ -807,7 +805,7 @@ void AP_Baro::update(void)
     } else {
         _primary = 0;
         for (uint8_t i=0; i<_num_sensors; i++) {
-            if (healthy(i)) {
+            if (healthy(i)&&(sensors[i].type == BARO_TYPE_AIR)) {
                 _primary = i;
                 break;
             }
@@ -865,6 +863,39 @@ void AP_Baro::set_pressure_correction(uint8_t instance, float p_correction)
         sensors[instance].p_correction = p_correction;
     }
 }
+// get the depth sensor number
+uint8_t AP_Baro::get_depth_sensor(void)
+{
+    uint8_t temp = 0;
+    for(uint8_t i = 0;i < _num_sensors;i++)
+    {
+        if(sensors[i].type == BARO_TYPE_WATER)
+        {
+            temp = i;
+            break;
+        }
+    }
+    return temp;
+}
+uint8_t AP_Baro::get_height_sensor(void)
+{
+    uint8_t temp = 0;
+    for(uint8_t i = 0;i < _num_sensors;i++)
+    {
+        if(sensors[i].type == BARO_TYPE_AIR)
+        {
+            temp = i;
+            break;
+        }
+    }
+    return temp;
+}
+/*
+void AP_Baro::set_primary_baro(uint8_t primary) 
+{ 
+    _primary_baro.set_and_save(primary); 
+}
+*/
 
 namespace AP {
 

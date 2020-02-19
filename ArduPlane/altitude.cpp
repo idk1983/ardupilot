@@ -1,14 +1,20 @@
 /*
+ * @Author: your name
+ * @Date: 2020-02-18 21:23:38
+ * @LastEditTime: 2020-02-18 21:23:39
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: /ardupilot/home/idk/下载/altitude.cpp
+ */
+/*
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
-
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -272,10 +278,8 @@ void Plane::change_target_altitude(int32_t change_cm)
   change target altitude by a proportion of the target altitude offset
   (difference in height to next WP from previous WP). proportion
   should be between 0 and 1. 
-
   When proportion is zero we have reached the destination. When
   proportion is 1 we are at the starting waypoint.
-
   Note that target_altitude is setup initially based on the
   destination waypoint
  */
@@ -398,10 +402,8 @@ void Plane::set_offset_altitude_location(const Location &loc)
 /*
   return true if current_loc is above loc. Used for glide slope
   calculations.
-
   "above" is simple if we are not terrain following, as it just means
   the pressure altitude of one is above the other.
-
   When in terrain following mode "above" means the over-the-terrain
   current altitude is above the over-the-terrain alt of loc. It is
   quite possible for current_loc to be "above" loc when it is at a

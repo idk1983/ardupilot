@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-02-18 21:21:54
+ * @LastEditTime: 2020-02-18 21:21:54
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: /ardupilot/home/idk/下载/RC_Channel.cpp
+ */
 #include "Plane.h"
 
 #include "RC_Channel.h"

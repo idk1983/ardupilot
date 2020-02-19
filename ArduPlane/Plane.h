@@ -1,21 +1,24 @@
 /*
+ * @Author: your name
+ * @Date: 2020-02-18 21:20:30
+ * @LastEditTime: 2020-02-19 09:15:13
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /ardupilot/home/idk/下载/Plane.h
+ */
+/*
    Lead developer: Andrew Tridgell & Tom Pittenger
-
    Authors:    Doug Weibel, Jose Julio, Jordi Munoz, Jason Short, Randy Mackay, Pat Hickey, John Arne Birkeland, Olivier Adler, Amilcar Lucas, Gregory Fletcher, Paul Riseborough, Brandon Jones, Jon Challinger
    Thanks to:  Chris Anderson, Michael Oborne, Paul Mather, Bill Premerlani, James Cohen, JB from rotorFX, Automatik, Fefenin, Peter Meister, Remzibi, Yury Smirnov, Sandro Benigno, Max Levine, Roberto Navoni, Lorenz Meier, Yury MonZon
-
    Please contribute your ideas! See http://dev.ardupilot.com for details
-
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
-
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -157,6 +160,8 @@ public:
     friend class ModeQAcro;
     friend class ModeQAutotune;
     friend class ModeTakeoff;
+    friend class ModeSubPlane;
+    friend class ModeFull;
 
     Plane(void);
 
@@ -184,7 +189,8 @@ private:
     RC_Channel *channel_pitch;
     RC_Channel *channel_throttle;
     RC_Channel *channel_rudder;
-
+    RC_Channel *channel_execute;
+    RC_Channel *channel_depth_simulation;
     AP_Logger logger;
 
     // scaled roll limit based on pitch
@@ -282,6 +288,8 @@ private:
     ModeQAcro mode_qacro;
     ModeQAutotune mode_qautotune;
     ModeTakeoff mode_takeoff;
+    ModeSubPlane mode_subplane;
+    ModeFull mode_full;
 
     // This is the state of the flight control system
     // There are multiple states defined such as MANUAL, FBW-A, AUTO
@@ -922,6 +930,45 @@ private:
     void update_GPS_10Hz(void);
     void update_compass(void);
     void update_alt(void);
+    #if FLOAT_CONTROL_ENABLE == ENABLE
+    void float_control(void);
+#ifdef USE_RC_PWM_IN
+#define CHANNEL_FLOAT_CONTROL 10
+#endif
+#ifdef USE_UART_OUT
+#define UARTPORT  2
+#endif
+#ifdef SINGLE_PUMP
+#endif
+#ifdef MULTI_PUMP
+#endif
+
+
+  typedef enum
+  {
+      SMS_NOSIGNAL = 0,
+      SMS_STABLE,
+      SMS_FLOAT,
+      SMS_DIVE,
+      SMS_CHARGE,
+      SMS_STOP
+  }State_Machine_Sink_t;
+  typedef enum
+  {
+      BALLON_FRAME_Y_3 = 0,
+      BALLON_FRAME_X_R_4
+  }BALLON_FRAME_t;
+#define BALLON_FRAME BALLON_FRAME_t.BALLON_FRAME_Y_3
+  const int ROLLMAX = 3;
+  const int ROLLMIN = -3;
+  const int PITCHMAX = 3;
+  const int PITCHMIN = -3;
+void balancewhenfloat(float roll,float pitch);
+void balancewhenstable(float roll,float pitch);
+void balancewhendive(float roll,float pitch);
+void balancewhencharge(float roll,float pitch);
+void balancewhenstop(float roll,float pitch);
+#endif
 #if ADVANCED_FAILSAFE == ENABLED
     void afs_fs_check(void);
 #endif
@@ -1055,3 +1102,39 @@ extern Plane plane;
 
 using AP_HAL::millis;
 using AP_HAL::micros;
+
+class FlightStage
+{
+    
+public:
+    typedef enum
+    {
+        Stage_Idle          = 0,
+        Stage_UnderWater    = 1,
+        Stage_Takeoff       = 2,
+        Stage_FixWing       = 3
+    }FlightStage_t;
+    bool stage_idle_init;
+    bool stage_underwater_init;
+    bool stage_takeoff_init;
+    bool stage_fixwing_init;
+    bool stage_achieve_depth;
+    float specified_depth;
+    float depth_tolerance;
+
+    uint32_t swimming_duration;
+    uint32_t achived_depth_time;
+    FlightStage(void);
+    FlightStage_t get_current_flight_stage(void);
+    void set_current_flight_stage(FlightStage_t stg);
+    void set_specified_depth(float depth);
+    float get_specified_depth(void);
+    void set_depth_tolerance(float tolerance);
+    float get_depth_tolerance(void);
+    void reset(void);
+    
+private:
+    FlightStage_t _flight_stage;
+    
+};
+extern FlightStage flightstage;

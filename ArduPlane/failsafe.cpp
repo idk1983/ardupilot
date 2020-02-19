@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-02-18 21:33:45
+ * @LastEditTime: 2020-02-18 21:33:45
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: /ardupilot/home/idk/下载/failsafe.cpp
+ */
 #include "Plane.h"
 
 /*

@@ -36,6 +36,8 @@ public:
     friend class ModeQStabilize;
     friend class ModeQAutotune;
     friend class ModeQAcro;
+    friend class ModeSubplane;
+    friend class ModeFull;
     
     QuadPlane(AP_AHRS_NavEKF &_ahrs);
 
@@ -64,6 +66,15 @@ public:
     // is VTOL available?
     bool available(void) const {
         return initialised;
+    }
+    
+    void set_assisted_speed(float speed)
+    {
+        assist_speed = speed;
+    }
+    AP_Float get_assisted_speed(void)
+    {
+        return assist_speed;
     }
 
     // is quadplane assisting?

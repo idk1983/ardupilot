@@ -691,6 +691,56 @@ const AP_Param::Info Plane::var_info[] = {
     // @User: User
     GSCALAR(dspoiler_rud_rate,      "DSPOILR_RUD_RATE",  DSPOILR_RUD_RATE_DEFAULT),
 
+    // @Param: TARGET_DEPTH
+    // @DisplayName: D_TARGET_DEPTH
+    // @Description: the depth of the plane want to touch
+    // @Units: m
+    // @Increment: 0.1
+    // @ReadOnly: False
+    // @Volatile: True
+    // @User: zhangxu
+    GSCALAR(d_target_depth, "D_TARGET_DEPTH", -1),
+
+    // @Param: INIT_DEPTH
+    // @DisplayName: D_INIT_DEPTH
+    // @Description: the depth when the plane is floating
+    // @Units: m
+    // @Increment: 0.1
+    // @ReadOnly: False
+    // @Volatile: True
+    // @User: zhangxu
+    GSCALAR(d_init_depth, "D_INIT_DEPTH", 0),
+
+    // @Param: SWIM_OFFSET
+    // @DisplayName: D_SWIM_OFFSET
+    // @Description: the swim offset when the plane is stable
+    // @Units: none
+    // @Increment: 0.01
+    // @ReadOnly: False
+    // @Volatile: True
+    // @User: zhangxu
+    GSCALAR(d_swim_offset, "D_SWIM_OFFSET", 0),
+
+    // @Param: SWIM_TIME
+    // @DisplayName: D_SWIM_TIME
+    // @Description: the swim TIME when the plane is stable
+    // @Units: S
+    // @Increment: 1
+    // @ReadOnly: False
+    // @Volatile: True
+    // @User: zhangxu
+    GSCALAR(d_swim_time, "D_SWIM_TIME", 10),
+
+    // @Param: TOTAL_TIME
+    // @DisplayName: D_TOTAL_TIME
+    // @Description: the swim TIME when the plane is stable
+    // @Units: S
+    // @Increment: 1
+    // @ReadOnly: False
+    // @Volatile: True
+    // @User: zhangxu
+    GSCALAR(d_total_time, "D_TOTAL_TIME", 30),
+
     // @Param: SYS_NUM_RESETS
     // @DisplayName: Num Resets
     // @Description: Number of APM board resets

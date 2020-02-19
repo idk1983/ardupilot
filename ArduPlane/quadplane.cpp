@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-02-18 22:27:27
+ * @LastEditTime: 2020-02-18 22:27:30
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: /ardupilot/home/idk/下载/quadplane.cpp
+ */
 #include "Plane.h"
 
 const AP_Param::GroupInfo QuadPlane::var_info[] = {
@@ -947,7 +955,6 @@ void QuadPlane::run_z_controller(void)
 
 /*
   check if we should relax the attitude controllers
-
   We relax them whenever we will be using them after a period of
   inactivity
  */
@@ -1834,7 +1841,6 @@ void QuadPlane::update(void)
 /*
   see if motors should be shutdown. If they should be then change AP_Motors state to 
   AP_Motors::DesiredSpoolState::SHUT_DOWN
-
   This is a safety check to prevent accidental motor runs on the
   ground, such as if RC fails and QRTL is started
  */

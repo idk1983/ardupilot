@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-02-18 21:32:01
+ * @LastEditTime: 2020-02-18 21:32:02
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: /ardupilot/home/idk/下载/defines.h
+ */
 #pragma once
 
 // Internal defines, don't edit and expect things to work
@@ -152,4 +160,3 @@ enum CrowFlapOptions {
     FULLSPAN         = (1 << 1),
     PROGRESSIVE_CROW = (1 << 2),
 }; 
-
