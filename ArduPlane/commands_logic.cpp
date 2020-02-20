@@ -1,11 +1,3 @@
-/*
- * @Author: your name
- * @Date: 2020-02-18 21:30:22
- * @LastEditTime: 2020-02-18 21:30:23
- * @LastEditors: your name
- * @Description: In User Settings Edit
- * @FilePath: /ardupilot/home/idk/下载/commands_logic.cpp
- */
 #include "Plane.h"
 
 /********************************************************************************/

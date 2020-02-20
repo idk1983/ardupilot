@@ -43,7 +43,7 @@
 #include "AP_RangeFinder_UAVCAN.h"
 #include "AP_RangeFinder_Lanbao.h"
 #include "AP_RangeFinder_LeddarVu8.h"
-
+#include "AP_RangeFinder_BestSensorSerial.h"
 #include <AP_BoardConfig/AP_BoardConfig.h>
 #include <AP_Logger/AP_Logger.h>
 #include <AP_Vehicle/AP_Vehicle_Type.h>
@@ -502,6 +502,10 @@ void RangeFinder::detect_instance(uint8_t instance, uint8_t& serial_instance)
             drivers[instance] = new AP_RangeFinder_LeddarVu8(state[instance], params[instance], serial_instance++);
         }
         break;
+    case Type::BestSensor_Serial:
+        if(AP_RangeFinder_BestSensorSerial::detect(serial_instance)) {
+            drivers[instance] = new AP_RangeFinder_BestSensorSerial(state[instance], params[instance], serial_instance++);
+        }
     default:
         break;
     }

@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2020-02-18 22:27:27
- * @LastEditTime: 2020-02-18 22:27:30
- * @LastEditors: your name
+ * @LastEditTime: 2020-02-20 22:50:39
+ * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /ardupilot/home/idk/下载/quadplane.cpp
  */
@@ -15,7 +15,7 @@ const AP_Param::GroupInfo QuadPlane::var_info[] = {
     // @Description: This enables QuadPlane functionality, assuming multicopter motors start on output 5. If this is set to 2 then when starting AUTO mode it will initially be in VTOL AUTO mode.
     // @Values: 0:Disable,1:Enable,2:Enable VTOL AUTO
     // @User: Standard
-    AP_GROUPINFO_FLAGS("ENABLE", 1, QuadPlane, enable, 0, AP_PARAM_FLAG_ENABLE),
+    AP_GROUPINFO_FLAGS("ENABLE", 1, QuadPlane, enable, 1, AP_PARAM_FLAG_ENABLE),
 
     // @Group: M_
     // @Path: ../libraries/AP_Motors/AP_MotorsMulticopter.cpp

@@ -79,6 +79,7 @@ public:
         BenewakeTF03 = 27,
         VL53L1X_Short = 28,
         LeddarVu8_Serial = 29,
+        BestSensor_Serial = 30
     };
 
     enum class Function {

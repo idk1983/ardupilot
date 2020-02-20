@@ -1,12 +1,4 @@
 /*
- * @Author: your name
- * @Date: 2020-02-18 21:23:38
- * @LastEditTime: 2020-02-18 21:23:39
- * @LastEditors: your name
- * @Description: In User Settings Edit
- * @FilePath: /ardupilot/home/idk/下载/altitude.cpp
- */
-/*
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation, either version 3 of the License, or

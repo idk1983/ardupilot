@@ -1,12 +1,4 @@
 /*
- * @Author: your name
- * @Date: 2020-02-18 21:29:12
- * @LastEditTime: 2020-02-18 21:29:12
- * @LastEditors: your name
- * @Description: In User Settings Edit
- * @FilePath: /ardupilot/home/idk/下载/commands.cpp
- */
-/*
  *  logic for dealing with the current command in the mission and home location
  */
 
