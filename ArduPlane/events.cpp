@@ -1,11 +1,3 @@
-/*
- * @Author: your name
- * @Date: 2020-02-18 21:32:52
- * @LastEditTime: 2020-02-18 23:03:24
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: /ardupilot/home/idk/下载/events.cpp
- */
 #include "Plane.h"
 
 void Plane::failsafe_short_on_event(enum failsafe_state fstype, ModeReason reason)

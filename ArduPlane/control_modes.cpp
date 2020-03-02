@@ -121,8 +121,8 @@ void Plane::read_control_switch()
             switch_debouncer = true;
             return;
         }
-
-        set_mode_by_number((enum Mode::Number)flight_modes[switchPosition].get(), ModeReason::RC_COMMAND);
+        if(!plane.script.get_highjack_mode_switch())
+            set_mode_by_number((enum Mode::Number)flight_modes[switchPosition].get(), ModeReason::RC_COMMAND);
 
         oldSwitchPosition = switchPosition;
     }

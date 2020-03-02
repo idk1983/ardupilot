@@ -1,12 +1,4 @@
 /*
- * @Author: your name
- * @Date: 2020-02-18 21:20:30
- * @LastEditTime: 2020-02-19 09:15:13
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: /ardupilot/home/idk/下载/Plane.h
- */
-/*
    Lead developer: Andrew Tridgell & Tom Pittenger
    Authors:    Doug Weibel, Jose Julio, Jordi Munoz, Jason Short, Randy Mackay, Pat Hickey, John Arne Birkeland, Olivier Adler, Amilcar Lucas, Gregory Fletcher, Paul Riseborough, Brandon Jones, Jon Challinger
    Thanks to:  Chris Anderson, Michael Oborne, Paul Mather, Bill Premerlani, James Cohen, JB from rotorFX, Automatik, Fefenin, Peter Meister, Remzibi, Yury Smirnov, Sandro Benigno, Max Levine, Roberto Navoni, Lorenz Meier, Yury MonZon
@@ -117,7 +109,7 @@
 #if CONFIG_HAL_BOARD == HAL_BOARD_SITL
 #include <SITL/SITL.h>
 #endif
-
+#include "script.h"
 /*
   main APM:Plane class
  */
@@ -163,6 +155,8 @@ public:
     friend class ModeSubPlane;
     friend class ModeFull;
 
+    friend class Script;
+
     Plane(void);
 
     // HAL::Callbacks implementation.
@@ -190,7 +184,7 @@ private:
     RC_Channel *channel_throttle;
     RC_Channel *channel_rudder;
     RC_Channel *channel_execute;
-    RC_Channel *channel_depth_simulation;
+    RC_Channel *channel_auto_run;
     AP_Logger logger;
 
     // scaled roll limit based on pitch
@@ -291,6 +285,7 @@ private:
     ModeSubPlane mode_subplane;
     ModeFull mode_full;
 
+    Script script;
     // This is the state of the flight control system
     // There are multiple states defined such as MANUAL, FBW-A, AUTO
     Mode *control_mode = &mode_initializing;
@@ -1102,39 +1097,3 @@ extern Plane plane;
 
 using AP_HAL::millis;
 using AP_HAL::micros;
-
-class FlightStage
-{
-    
-public:
-    typedef enum
-    {
-        Stage_Idle          = 0,
-        Stage_UnderWater    = 1,
-        Stage_Takeoff       = 2,
-        Stage_FixWing       = 3
-    }FlightStage_t;
-    bool stage_idle_init;
-    bool stage_underwater_init;
-    bool stage_takeoff_init;
-    bool stage_fixwing_init;
-    bool stage_achieve_depth;
-    float specified_depth;
-    float depth_tolerance;
-
-    uint32_t swimming_duration;
-    uint32_t achived_depth_time;
-    FlightStage(void);
-    FlightStage_t get_current_flight_stage(void);
-    void set_current_flight_stage(FlightStage_t stg);
-    void set_specified_depth(float depth);
-    float get_specified_depth(void);
-    void set_depth_tolerance(float tolerance);
-    float get_depth_tolerance(void);
-    void reset(void);
-    
-private:
-    FlightStage_t _flight_stage;
-    
-};
-extern FlightStage flightstage;

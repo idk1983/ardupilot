@@ -357,4 +357,30 @@ bool SRV_Channels::exchange_throttle_function(uint8_t num_none_channel)
     }
     return false;
 }
+bool SRV_Channels::exchange_rudder_function(uint8_t num_none_channel)
+{
+    uint8_t rudder_position = 0;
+    bool rudder_found = false;
+    bool new_function_available = false;
 
+    for (uint8_t i=0; i<NUM_SERVO_CHANNELS; i++) 
+    {
+        if (channels[i].function == SRV_Channel::k_rudder) 
+        {
+            rudder_position = i;
+            rudder_found = true;
+            break;
+        }
+    }
+    if (channels[num_none_channel].function == SRV_Channel::k_none) 
+    {
+        new_function_available = true;    
+    }
+    if(rudder_found && new_function_available)
+    {
+        set_aux_channel_forced(SRV_Channel::k_none, rudder_position);
+        set_aux_channel_forced(SRV_Channel::k_rudder, num_none_channel);
+        return true;
+    }
+    return false;
+}

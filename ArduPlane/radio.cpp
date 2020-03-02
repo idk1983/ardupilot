@@ -19,7 +19,7 @@ void Plane::set_control_channels(void)
     channel_throttle = RC_Channels::rc_channel(rcmap.throttle()-1);
     channel_rudder   = RC_Channels::rc_channel(rcmap.yaw()-1);
     channel_execute  = RC_Channels::rc_channel(CH_11);
-    channel_depth_simulation = RC_Channels::rc_channel(CH_10);
+    channel_auto_run = RC_Channels::rc_channel(CH_10);
     // set rc channel ranges
     channel_roll->set_angle(SERVO_MAX);
     channel_pitch->set_angle(SERVO_MAX);

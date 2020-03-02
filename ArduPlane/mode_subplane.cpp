@@ -1,21 +1,16 @@
 #include "mode.h"
 #include "Plane.h"
-#define UNDER_WATER_AlGORITHM 1
-//#define TARGET_DEPTH  (-1)
-//#define INIT_DEPTH (0)
 #define PITCH_LIMIT_MAX (30*100)
 #define PITCH_LIMIT_MIN (-30*100)
 #define TIME_BASE (1000)
-// FBWA:1 or FBWB:2
-//需要更新所有新加的变量的初始化以及如何更新,地面站更新？还是遥控器输入？默认值是多少？
-
 bool ModeSubPlane::_enter()
 {
     //FBWA
-#if UNDER_WATER_AlGORITHM == 1
     plane.throttle_allows_nudging = false;
     plane.auto_throttle_mode = false;
     plane.auto_navigation_mode = false;
+
+    runned = false;
     current_stage = dive_stage;
     last_stage = idle_stage;
     mission_start = false;
@@ -24,19 +19,6 @@ bool ModeSubPlane::_enter()
     float_time = 0;
     mission_intervel_time = 0;
     control_mode = manual;
-#endif
-    //FBWB
-#if UNDER_WATER_AlGORITHM == 2 
-    plane.throttle_allows_nudging = false;
-    plane.auto_throttle_mode = true;
-    plane.auto_navigation_mode = false;
-#if SOARING_ENABLED == ENABLED
-    // for ArduSoar soaring_controller
-    plane.g2.soaring_controller.init_cruising();
-#endif
-#endif    
-   
-
     //change barometer under water surface
     plane.barometer.set_primary_baro(plane.barometer.get_depth_sensor());
     plane.barometer.get_altitude();
@@ -56,11 +38,7 @@ bool ModeSubPlane::_enter()
     {
         gcs().send_text(MAV_SEVERITY_DEBUG,"fail to exchange throttle");  
     }
-    //FBWB
-#if UNDER_WATER_AlGORITHM == 2      
-    plane.set_target_altitude_current();
-    // plane.change_target_altitude(-50);
-#endif     
+
     gcs().send_text(MAV_SEVERITY_DEBUG,"entered the subplane mode");  
 
     return true;
@@ -88,26 +66,14 @@ void ModeSubPlane::_exit()
     mission_intervel_time = 0;
     float_time = 0;
     control_mode = manual;
+    runned = false;
     gcs().send_text(MAV_SEVERITY_DEBUG,"exited the subplane mode");   
 
 }
 void ModeSubPlane::update()
 {
-    //FBWB
-#if UNDER_WATER_AlGORITHM == 2        
-    plane.nav_roll_cd = plane.channel_roll->norm_input() * plane.roll_limit_cd;
-    plane.update_load_factor();
-    plane.update_fbwb_speed_height();
-    if (plane.failsafe.rc_failsafe) 
-    {
-        plane.nav_roll_cd = 0;
-        plane.nav_pitch_cd = 30;
-    }
-#endif
-   //FBWA
-#if UNDER_WATER_AlGORITHM == 1 
-    int16_t channel_execute_input = plane.channel_execute->get_radio_in();
-    if(channel_execute_input>1800)
+    int16_t channel_auto_run_input = plane.channel_auto_run->get_radio_in();
+    if(channel_auto_run_input>1800)
     {
         control_mode = emergency;
         current_stage = dive_stage;
@@ -118,7 +84,7 @@ void ModeSubPlane::update()
         float_time = 0;
         mission_intervel_time = 0;
     }
-    else if (channel_execute_input < 1150)
+    else if (channel_auto_run_input < 1150)
     {
         control_mode = autorun;
     } 
@@ -209,6 +175,7 @@ void ModeSubPlane::update()
             plane.channel_roll->set_control_in(0);
             start_time = 0;
             stable_time = 0;
+            runned = true;
             if(mission_intervel_time == 0)
                 mission_intervel_time = tnow;
             //if(((tnow - mission_intervel_time)>5000)&&(mission_intervel_time != 0))
@@ -252,8 +219,6 @@ void ModeSubPlane::update()
         stable_time = 0;
         mission_intervel_time = 0;
     }
-    
-#endif    
 }
 void ModeSubPlane::manual_interact()
 {

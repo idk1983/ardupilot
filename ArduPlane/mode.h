@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-02-18 21:35:43
- * @LastEditTime: 2020-02-18 22:35:23
+ * @LastEditTime: 2020-03-02 20:58:06
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /ardupilot/home/idk/下载/mode.h
@@ -349,6 +349,7 @@ public:
 
     // used as a base class for all Q modes
     bool _enter() override;
+    void _exit() override;
 
 protected:
 
@@ -522,6 +523,7 @@ public:
     uint32_t stable_time;
     uint32_t mission_intervel_time;
     bool mission_start;
+    bool runned;
     control_mode_t control_mode;
 
 protected:

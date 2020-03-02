@@ -305,6 +305,7 @@ public:
     
     static bool exchange_throttle_function(uint8_t num_none_channel); 
 
+    static bool exchange_rudder_function(uint8_t num_none_channel); 
     // set the default function for a channel
     static void set_default_function(uint8_t chan, SRV_Channel::Aux_servo_function_t function);
 

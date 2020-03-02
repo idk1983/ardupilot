@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-02-18 22:27:27
- * @LastEditTime: 2020-02-20 22:50:39
+ * @LastEditTime: 2020-02-27 20:53:58
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /ardupilot/home/idk/下载/quadplane.cpp
@@ -879,6 +879,12 @@ void QuadPlane::multicopter_attitude_rate_update(float yaw_rate_cds)
     // normal control modes for VTOL and FW flight
     if (in_vtol_mode() || is_tailsitter()) {
         // use euler angle attitude control
+    if(plane.g.flow_rudder == 1)
+        //gcs().send_text(MAV_SEVERITY_DEBUG,"current yaw rate %f",yaw_rate_cds);
+        attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(plane.nav_roll_cd,
+                                                                      plane.nav_pitch_cd,
+                                                                      0);
+    else
         attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(plane.nav_roll_cd,
                                                                       plane.nav_pitch_cd,
                                                                       yaw_rate_cds);
@@ -1343,7 +1349,6 @@ float QuadPlane::get_desired_yaw_rate_cds(void)
 
     // add in weathervaning
     yaw_cds += get_weathervane_yaw_rate_cds();
-    
     return yaw_cds;
 }
 

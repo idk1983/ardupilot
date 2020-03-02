@@ -406,6 +406,9 @@ void Plane::stabilize()
                 control_mode == &mode_qautotune) &&
                !quadplane.in_tailsitter_vtol_transition()) {
         quadplane.control_run();
+        if(g.flow_rudder == 1) 
+            stabilize_yaw(speed_scaler);
+
     } else {
         if (g.stick_mixing == STICK_MIXING_FBW && control_mode != &mode_stabilize) {
             stabilize_stick_mixing_fbw();

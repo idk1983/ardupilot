@@ -220,6 +220,13 @@ const AP_Param::Info Plane::var_info[] = {
     // @User: Advanced
     GSCALAR(use_reverse_thrust,     "USE_REV_THRUST",  USE_REVERSE_THRUST_AUTO_LAND_APPROACH),
 
+    // @Param: FLOW_RUDDER_ENABLE
+    // @DisplayName: bool for enable flow rudder support
+    // @Description: this param use to enable flow rudder support in quandplane
+    // @Values: 0:disable,1:enable
+    // @User: Advanced
+    GSCALAR(flow_rudder,     "FLOW_RUDDER",  0),
+
     // @Param: NAV_CONTROLLER
     // @DisplayName: Navigation controller selection
     // @Description: Which navigation controller to enable. Currently the only navigation controller available is L1. From time to time other experimental controllers will be added which are selected using this parameter.

@@ -193,7 +193,8 @@ public:
         k_param_curr_amp_per_volt,  // unused
         k_param_input_voltage, // deprecated, can be deleted
         k_param_pack_capacity,      // unused
-        k_param_sonar_enabled_old,  // unused
+        //k_param_sonar_enabled_old,  // unused
+        k_param_flow_rudder,
         k_param_ahrs,  // AHRS group
         k_param_barometer,   // barometer ground calibration
         k_param_airspeed,  // AP_Airspeed parameters
@@ -508,6 +509,7 @@ public:
 	AP_Float d_swim_offset;
     AP_Int32 d_swim_time;
 	AP_Int32 d_total_time;
+    AP_Int8 flow_rudder;
 };
 
 /*

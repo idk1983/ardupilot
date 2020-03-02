@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-01-27 12:35:27
+ * @LastEditTime: 2020-02-27 20:54:43
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /ardupilot/ArduPlane/mode_qstabilize.cpp
+ */
 #include "mode.h"
 #include "Plane.h"
 
@@ -11,8 +19,15 @@ bool ModeQStabilize::_enter()
         plane.auto_throttle_mode = false;
         plane.auto_state.vtol_mode = true;
     }
+    if(plane.g.flow_rudder)
+        SRV_Channels::exchange_rudder_function(CH_10);
 
     return true;
+}
+void ModeQStabilize::_exit()
+{
+    if(plane.g.flow_rudder)
+        SRV_Channels::exchange_rudder_function(CH_4);
 }
 
 void ModeQStabilize::update()

@@ -37,7 +37,6 @@
 #include <AP_ServoRelayEvents/AP_ServoRelayEvents.h>
 #include <AP_Camera/AP_RunCam.h>
 #include <AP_Hott_Telem/AP_Hott_Telem.h>
-
 class AP_Vehicle : public AP_HAL::HAL::Callbacks {
 
 public:
